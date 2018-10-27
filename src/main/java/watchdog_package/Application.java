@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Application {
     public static void main(String[] args) throws IOException, ParseException {
+        //test
         List<Location> list = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
 
         Location l1 = list.get(0);
