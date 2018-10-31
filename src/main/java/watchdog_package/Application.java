@@ -1,29 +1,27 @@
 package main.java.watchdog_package;
 
+import main.java.watchdog_package.layout.LocationPredictionUI;
 import main.java.watchdog_package.logic.FileHandle;
 import main.java.watchdog_package.logic.entities.Location;
-import main.java.watchdog_package.logic.LocationMethods;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Application {
     public static void main(String[] args) throws IOException, ParseException {
-        //test
-        List<Location> list = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
+        String timeStr = 2018 + "-" + 10 + "-" + 31 + "-" + 20 + "-" + 10 + "-" + 03;
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd-H-m-s");
+        Date time = fmt.parse(timeStr);
 
-        Location l1 = list.get(0);
-        Location l2 = list.get(2);
+        Location l = new Location(31.556319, 34.600448, time);
 
-        System.out.println("l1 = " + l1);
-        System.out.println("l2 = " + l2);
+        System.out.println(l);
 
-        System.out.println("distance(l1,l2) = " + LocationMethods.distance(l1,l2));
+        LocationPredictionUI.predictLocationUI(l);
 
-        System.out.println("days - " + LocationMethods.timeDiffInDays(l1,l2));
-        System.out.println("hour - " + LocationMethods.timeDiffInHours(l1,l2));
-        System.out.println("min - " + LocationMethods.timeDiffInMinutes(l1,l2));
-        System.out.println("sec - " + LocationMethods.timeDiffInSeconds(l1,l2));
+        //FileHandle.handleData();
+
     }
 }

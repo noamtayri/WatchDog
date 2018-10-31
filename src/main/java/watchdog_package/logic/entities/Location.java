@@ -23,4 +23,8 @@ public class Location {
     public String toString() {
         return "lat = " + lat + "\tlon = " + lon + "\ttime = " + time;
     }
+
+    public void print(){
+        System.out.println(this.lat+ "," + this.lon);
+    }
 }
