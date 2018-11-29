@@ -18,7 +18,7 @@ public class LocationMethods {
         return d * 1000;
     }
 
-    private static double deg2rad(double deg) {
+    public static double deg2rad(double deg) {
         return deg * (Math.PI/180);
     }
 
