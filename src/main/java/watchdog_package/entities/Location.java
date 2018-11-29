@@ -1,4 +1,4 @@
-package main.java.watchdog_package.logic.entities;
+package main.java.watchdog_package.entities;
 
 import java.util.Date;
 

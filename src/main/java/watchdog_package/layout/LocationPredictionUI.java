@@ -4,13 +4,12 @@ import main.java.watchdog_package.logic.FileHandle;
 import main.java.watchdog_package.logic.LocationMethods;
 import main.java.watchdog_package.logic.LocationPrediction;
 import main.java.watchdog_package.logic.LocationPredictionService;
-import main.java.watchdog_package.logic.entities.Location;
+import main.java.watchdog_package.entities.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class LocationPredictionUI {
 

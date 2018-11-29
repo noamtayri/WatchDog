@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import main.java.watchdog_package.logic.entities.Location;
+import main.java.watchdog_package.entities.Location;
 
 public class FileHandle {
 

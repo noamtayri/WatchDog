@@ -1,6 +1,6 @@
 package main.java.watchdog_package.logic;
 
-import main.java.watchdog_package.logic.entities.Location;
+import main.java.watchdog_package.entities.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
