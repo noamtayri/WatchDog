@@ -17,12 +17,7 @@ public class ActivityTrackerService {
     public final double RIDE_SPEED_THRESHOLD_IN_MPS = 12.5; //45 kph
 
 
-
-    public enum ActivityType{
-        STRENUOUS,
-        MODERATE,
-        REST;
-    }
+    private List<Stop> stopList = new LinkedList<>();
 
     public boolean isRide(Location l1, Location l2){
         boolean ret = false;
@@ -107,23 +102,26 @@ public class ActivityTrackerService {
     }
 
     public void ExtractActivityPalces(List<Location> locationList){
-        List<Stop> stopList = new LinkedList<>();
 
         int locationIndex = 0;
         while(locationIndex < locationList.size()){
+            List<Location> restLocationList = locationList.subList(locationIndex,locationList.size()-1);
+
             int nextPointIndex = locationIndex +
-                    findNextPointIndexByStayDuration(locationList.subList(locationIndex,locationList.size()));
+                    findNextPointIndexByStayDuration(restLocationList);
 
-            List<Location> currentSubList = locationList.subList(locationIndex,nextPointIndex);
+            List<Location> stopCandidateList = locationList.subList(locationIndex,nextPointIndex);
 
-            if(diameter(currentSubList) <= ROAMING_DISTANCE_IN_METER) {
+            if(diameter(stopCandidateList) > ROAMING_DISTANCE_IN_METER) {
+                //The dog is moving
                 locationIndex++;
             }
             else{
+                stopCandidateList = restLocationList;
                 nextPointIndex = locationIndex +
-                        findNextPointByRoamingDistance(currentSubList);
+                        findNextPointByRoamingDistance(stopCandidateList);
 
-                Position stopPosition = medoid(currentSubList);
+                Position stopPosition = medoid(stopCandidateList);
                 Date stopStartTime = locationList.get(locationIndex).time;
                 Date stopEndTime = locationList.get(nextPointIndex).time;
                 stopList.add(new Stop(stopPosition, stopStartTime, stopEndTime));
