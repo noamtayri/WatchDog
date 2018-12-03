@@ -1,7 +1,9 @@
 package main.java.watchdog_package.entities;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Date;
-
+import main.java.watchdog_package.entities.Position;
 
 public class Location {
     public double lat;
@@ -18,6 +20,16 @@ public class Location {
         lat = 0;
         lon = 0;
         time = null;
+    }
+
+    public static List<Position> convertLocationsToPositions(List<Location> locationList){
+        List<Position> positionsList = new LinkedList<>();
+
+        for(Location location : locationList){
+            positionsList.add(new Position(location));
+        }
+
+        return positionsList;
     }
 
     public String toString() {
