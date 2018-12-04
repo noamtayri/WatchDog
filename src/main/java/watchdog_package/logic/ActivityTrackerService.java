@@ -78,15 +78,17 @@ public class ActivityTrackerService {
         boolean found = false;
 
         int locationIndex = 0;
-        while(locationIndex < locationList.size() && !found){
-            locationIndex++;
+        while(++locationIndex < locationList.size() && !found){
+            //locationIndex++;
             double timeDiffInMinutes =
                     LocationMethods.timeDiffInMinutes(currentLocation, locationList.get(locationIndex));
             if(timeDiffInMinutes >= STAY_DURATION_IN_MIN){
                 found = true;
             }
         }
-
+        if(!found){
+            locationIndex--;
+        }
         return locationIndex;
     }
 

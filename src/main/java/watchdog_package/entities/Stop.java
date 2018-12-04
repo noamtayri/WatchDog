@@ -3,12 +3,16 @@ package main.java.watchdog_package.entities;
 import java.util.Date;
 
 public class Stop {
+    static int numOfStops = 0;
+
+    private int id;
     private Position position;
-    Date startTime;
-    Date endTime;
+    private Date startTime;
+    private Date endTime;
 
 
     public Stop(Position position, Date startTime, Date endTime) {
+        id = numOfStops++;
         this.position = position;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -16,6 +20,6 @@ public class Stop {
 
     @Override
     public String toString() {
-        return position + "\nstart time: "+startTime + "\n" +"end time: "+endTime + "\n";
+        return "id = " + id + "\nposition:" + position + "\nstart time: "+startTime + "\n" +"end time: "+endTime + "\n";
     }
 }
