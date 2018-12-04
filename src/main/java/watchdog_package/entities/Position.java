@@ -9,7 +9,7 @@ public class Position {
     }
 
     public Position(Location location){
-        new Position(location.lat,location.lon);
+        this(location.lat,location.lon);
     }
 
     @Override

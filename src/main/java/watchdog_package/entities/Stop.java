@@ -13,4 +13,9 @@ public class Stop {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    @Override
+    public String toString() {
+        return position + "\nstart time: "+startTime + "\n" +"end time: "+endTime + "\n";
+    }
 }
