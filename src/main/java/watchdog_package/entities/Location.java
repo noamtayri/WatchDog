@@ -21,7 +21,7 @@ public class Location {
     }
 
     public Location() {
-        position = new Position(0,0);
+        position = new Position();
         time = null;
     }
 
