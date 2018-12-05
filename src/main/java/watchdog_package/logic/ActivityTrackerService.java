@@ -2,6 +2,7 @@ package main.java.watchdog_package.logic;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Position;
 import main.java.watchdog_package.entities.Stop;
+import main.java.watchdog_package.entities.Trip;
 import main.java.watchdog_package.logic.Utils;
 
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ActivityTrackerService {
+
+    private enum ActivityType{TRIP, STOP}
 
     public final long STAY_DURATION_IN_MIN = 5;
     public final double ROAMING_DISTANCE_IN_METER = 50;
@@ -20,9 +23,11 @@ public class ActivityTrackerService {
 
 
     private List<Stop> stopList;
+    private List<Trip> tripList;
 
     public ActivityTrackerService(){
-        stopList = new LinkedList<>();
+        stopList = new ArrayList<>();
+        tripList = new ArrayList<>();
     }
 
     public boolean isRide(Location l1, Location l2){
@@ -53,10 +58,8 @@ public class ActivityTrackerService {
 
     public double diameter(List<Location> locationList){
         double diameter = 0;
-        //System.out.println("size = " + locationList.size());
         for(int l1Index = 0; l1Index < locationList.size(); l1Index++){
             for(int l2Index = l1Index+1; l2Index < locationList.size(); l2Index++){
-                //Utils.printTest();
                 double distance = LocationMethods.distance(locationList.get(l1Index).getPosition(),locationList.get(l2Index).getPosition());
                 if(distance>diameter) {
                     diameter = distance;
@@ -86,7 +89,7 @@ public class ActivityTrackerService {
                 found = true;
             }
         }
-        if(!found){
+        if(!found || locationIndex == locationList.size()){
             locationIndex--;
         }
         return locationIndex;
@@ -110,8 +113,29 @@ public class ActivityTrackerService {
         return locationIndex;
     }
 
+    private void setTrip(List<Location> locationList, int locationIndex, ActivityType lastActivityType){
+        switch(lastActivityType){
+            case STOP:
+                Trip trip = new Trip();
+                if( locationIndex > 0 ) {
+                    trip.addLocation(locationList.get(locationIndex - 1));
+                }
+                trip.addLocation(locationList.get(locationIndex));
+                tripList.add(trip);
+                break;
+            case TRIP:
+                int tripId = tripList.size() - 1;
+                tripList.get(tripId).addLocation(locationList.get(locationIndex));
+                break;
+                default:
+                    //Do nothing
+                    break;
+        }
+    }
+
     public void ExtractActivityPalces(List<Location> locationList){
-        System.out.println("location list size = " + locationList.size());
+        ActivityType lastActivityType = ActivityType.STOP;
+
         int locationListSize = locationList.size();
         int locationIndex = 0;
         while(locationIndex < locationListSize){
@@ -120,15 +144,14 @@ public class ActivityTrackerService {
 
             int nextPointIndex = locationIndex +
                     findNextPointIndexByStayDuration(restLocationList);
-            if( nextPointIndex >= locationListSize ){
-                nextPointIndex = locationListSize-1;
-            }
-            //System.out.println("location list size = " + locationList.size());
-            System.out.println("next index = " + nextPointIndex);
+
             List<Location> stopCandidateList = new ArrayList<>(locationList.subList(locationIndex,nextPointIndex+1));
 
             if(diameter(stopCandidateList) > ROAMING_DISTANCE_IN_METER) {
-                //The dog is moving
+
+                setTrip(locationList,locationIndex,lastActivityType);
+                lastActivityType = ActivityType.TRIP;
+
                 locationIndex++;
             }
             else{
@@ -154,11 +177,13 @@ public class ActivityTrackerService {
                 System.out.println("stop added: " + stop);
 
                 locationIndex = nextPointIndex + 1;
+                lastActivityType = ActivityType.STOP;
             }
         }
 
-        for(Stop stop : stopList){
-            System.out.println(stop);
-        }
+        Utils.printStopList(stopList);
+        System.out.println();
+        Utils.printTripList(tripList);
+
     }
 }

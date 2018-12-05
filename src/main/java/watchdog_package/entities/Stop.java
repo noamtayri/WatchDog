@@ -3,7 +3,7 @@ package main.java.watchdog_package.entities;
 import java.util.Date;
 
 public class Stop {
-    static int numOfStops = 0;
+    private static int numOfStops = 0;
 
     private int id;
     private Position position;
