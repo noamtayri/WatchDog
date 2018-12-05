@@ -19,17 +19,17 @@ public class LocationPredictionUI {
 
     //test
     public static void show() throws IOException {
-        List<Location> list1 = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
+        /*List<Location> list1 = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
         System.out.println("list1.size() = " + list1.size());
 
         List<Location> list2 = LocationPredictionService.getSameLocation(list1.get(0));
         System.out.println("list2.size() = " + list2.size());
-        /*
+        *//*
         for (Location l: list2
              ) {
             l.print();
         }
-        */
+        *//*
 
         System.out.println();
         System.out.println("list1.get(0) = " + list1.get(0));
@@ -55,7 +55,7 @@ public class LocationPredictionUI {
         System.out.println();
 
 
-        /*
+        *//*
         Location l1 = list.get(1300);
         Location l2 = list.get(2);
 
@@ -68,9 +68,9 @@ public class LocationPredictionUI {
         System.out.println("hour - " + LocationMethods.timeDiffInHours(l1,l2));
         System.out.println("min - " + LocationMethods.timeDiffInMinutes(l1,l2));
         System.out.println("sec - " + LocationMethods.timeDiffInSeconds(l1,l2));
-        */
+        *//*
 
-        /* check how many days in max value of long as ms
+        *//* check how many days in max value of long as ms
         long max = Long.MAX_VALUE;
         System.out.println("max = " + max);
         System.out.println(TimeUnit.DAYS.convert(max, TimeUnit.MILLISECONDS));
