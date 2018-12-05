@@ -35,10 +35,10 @@ public class LocationPredictionUI {
         System.out.println("list1.get(0) = " + list1.get(0));
         System.out.println("list1.get(10) = " + list1.get(10));
         System.out.println(LocationMethods.timeDiffInSeconds(list1.get(0), list1.get(10)));
-        long ms = Math.abs(list1.get(0).time.getTime() - list1.get(10).time.getTime());
+        long ms = Math.abs(list1.get(0).getTime().getTime() - list1.get(10).getTime().getTime());
         System.out.println(ms);
-        System.out.println(list1.get(0).time.getTime() + ms);
-        Date d = new Date(list1.get(0).time.getTime() + ms);
+        System.out.println(list1.get(0).getTime().getTime() + ms);
+        Date d = new Date(list1.get(0).getTime().getTime() + ms);
         System.out.println(d);
 
         List<Integer> a = new ArrayList<>();

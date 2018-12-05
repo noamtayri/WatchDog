@@ -1,42 +1,62 @@
 package main.java.watchdog_package.entities;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import main.java.watchdog_package.entities.Position;
 
 public class Location {
-    public double lat;
-    public double lon;
-    public Date time;
+    private Position position;
+    private Date time;
 
-    public Location(double lat, double lon, Date time) {
-        this.lat = lat;
-        this.lon = lon;
+    public Location(Position position, Date time) {
+        this.position = position;
         this.time = time;
+/*
+        DateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        timeFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
+        timeFormat.format(this.time);
+*/
     }
 
     public Location() {
-        lat = 0;
-        lon = 0;
+        position = new Position(0,0);
         time = null;
     }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
 
     public static List<Position> convertLocationsToPositions(List<Location> locationList){
         List<Position> positionsList = new LinkedList<>();
 
         for(Location location : locationList){
-            positionsList.add(new Position(location));
+            positionsList.add(location.getPosition());
         }
 
         return positionsList;
     }
 
     public String toString() {
-        return "lat = " + lat + "\tlon = " + lon + "\ttime = " + time;
+        return position + "\ttime = " + time;
     }
 
     public void print(){
-        System.out.println(this.lat+ "," + this.lon);
+        System.out.println(position);
     }
 }

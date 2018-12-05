@@ -12,7 +12,7 @@ import java.util.List;
 public class ActivityTrackerService {
 
     public final long STAY_DURATION_IN_MIN = 5;
-    public final double ROAMING_DISTANCE_IN_METER = 15;
+    public final double ROAMING_DISTANCE_IN_METER = 50;
 
     public final long MAX_TIME_GAP_HOURS = 24;
     public final double MAX_AREA_RADIOS_METER = 10;
@@ -37,7 +37,7 @@ public class ActivityTrackerService {
 
     public boolean LackOfReporting(Location l1, Location l2){
         boolean ret = false;
-        double distance = LocationMethods.distance(l1,l2);
+        double distance = LocationMethods.distance(l1.getPosition(),l2.getPosition());
         long timeGap = LocationMethods.timeDiffInHours(l1,l2);
 
         if (timeGap > MAX_TIME_GAP_HOURS){
@@ -57,7 +57,7 @@ public class ActivityTrackerService {
         for(int l1Index = 0; l1Index < locationList.size(); l1Index++){
             for(int l2Index = l1Index+1; l2Index < locationList.size(); l2Index++){
                 //Utils.printTest();
-                double distance = LocationMethods.distance(locationList.get(l1Index),locationList.get(l2Index));
+                double distance = LocationMethods.distance(locationList.get(l1Index).getPosition(),locationList.get(l2Index).getPosition());
                 if(distance>diameter) {
                     diameter = distance;
                 }
@@ -120,7 +120,11 @@ public class ActivityTrackerService {
 
             int nextPointIndex = locationIndex +
                     findNextPointIndexByStayDuration(restLocationList);
-
+            if( nextPointIndex >= locationListSize ){
+                nextPointIndex = locationListSize-1;
+            }
+            //System.out.println("location list size = " + locationList.size());
+            System.out.println("next index = " + nextPointIndex);
             List<Location> stopCandidateList = new ArrayList<>(locationList.subList(locationIndex,nextPointIndex+1));
 
             if(diameter(stopCandidateList) > ROAMING_DISTANCE_IN_METER) {
@@ -142,8 +146,8 @@ public class ActivityTrackerService {
                 nextPointIndex--;
 
                 Position stopPosition = medoid(stopCandidateList);
-                Date stopStartTime = locationList.get(locationIndex).time;
-                Date stopEndTime = locationList.get(nextPointIndex).time;
+                Date stopStartTime = locationList.get(locationIndex).getTime();
+                Date stopEndTime = locationList.get(nextPointIndex).getTime();
                 Stop stop = new Stop(stopPosition, stopStartTime, stopEndTime);
                 stopList.add(stop);
 
@@ -151,6 +155,10 @@ public class ActivityTrackerService {
 
                 locationIndex = nextPointIndex + 1;
             }
+        }
+
+        for(Stop stop : stopList){
+            System.out.println(stop);
         }
     }
 }

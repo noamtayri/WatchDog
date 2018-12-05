@@ -15,7 +15,7 @@ public class LocationPredictionService {
         List<Location> result = new ArrayList<>();
 
         for (Location l: data) {
-            if(LocationMethods.distance(location, l) <= 3){
+            if(LocationMethods.distance(location.getPosition(), l.getPosition()) <= 3){
                 result.add(l);
             }
         }
@@ -28,9 +28,9 @@ public class LocationPredictionService {
         List<Location> result = new ArrayList<>();
 
         for (Location l1: list) {
-            Date locationPlusTime = new Date(l1.time.getTime() + time);
+            Date locationPlusTime = new Date(l1.getTime().getTime() + time);
             for (Location l2: data) {
-                long msDiff = Math.abs(locationPlusTime.getTime() - l2.time.getTime());
+                long msDiff = Math.abs(locationPlusTime.getTime() - l2.getTime().getTime());
                 if(TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS) < 120){
                     result.add(l2);
                 }

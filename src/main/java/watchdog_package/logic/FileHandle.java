@@ -10,9 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -21,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import main.java.watchdog_package.entities.Location;
+import main.java.watchdog_package.entities.Position;
 
 public class FileHandle {
 
@@ -29,9 +28,9 @@ public class FileHandle {
 
     public static void handleData() throws ParseException, NumberFormatException, IOException {
 
-        readFromXML("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\data2.xml");
+        readFromXML("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\data.xml");
 
-        writeToJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
+        writeToJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
 
     }
 
@@ -122,13 +121,16 @@ public class FileHandle {
             String timeStr = year + "-" + month + "-" + day + "-" + hour + "-" + min + "-" + sec;
 
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd-H-m-s");
+            fmt.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
             Date time = fmt.parse(timeStr);
 
-            Location l = new Location(lat, lon, time);
+
+            Location l = new Location(new Position(lat, lon), time);
             data.add(l);
         }
 
-        System.out.println("XML file readed");
+        data.sort( new LocationComparator() );
+        System.out.println("XML file read");
     }
 	/*
 	 * static public class Line { public double lat; public double lon; public

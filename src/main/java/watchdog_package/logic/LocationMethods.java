@@ -9,11 +9,11 @@ import java.util.concurrent.TimeUnit;
 public class LocationMethods {
 
     // distance returned in METERS
-    public static double distance(Location l1, Location l2) {
+    public static double distance(Position p1, Position p2) {
         int r = 6371; //Radius of the earth in km
-        double dLat = deg2rad(l2.lat - l1.lat);
-        double dLon = deg2rad(l2.lon - l1.lon);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(l1.lat)) * Math.cos(deg2rad(l2.lat)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        double dLat = LocationMethods.deg2rad(p2.getLat() - p1.getLat());
+        double dLon = LocationMethods.deg2rad(p2.getLon() - p1.getLon());
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(LocationMethods.deg2rad(p1.getLat())) * Math.cos(LocationMethods.deg2rad(p2.getLat())) * Math.sin(dLon/2) * Math.sin(dLon/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         double d = r * c;
 
@@ -25,27 +25,27 @@ public class LocationMethods {
     }
 
     public static long timeDiffInDays(Location l1, Location l2) {
-        long msDiff = Math.abs(l2.time.getTime() - l1.time.getTime());
+        long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
         return TimeUnit.DAYS.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 
     public static long timeDiffInHours(Location l1, Location l2) {
-        long msDiff = Math.abs(l2.time.getTime() - l1.time.getTime());
+        long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
         return TimeUnit.HOURS.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 
     public static long timeDiffInMinutes(Location l1, Location l2) {
-        long msDiff = Math.abs(l2.time.getTime() - l1.time.getTime());
+        long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
         return TimeUnit.MINUTES.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 
     public static long timeDiffInSeconds(Location l1, Location l2) {
-        long msDiff = Math.abs(l2.time.getTime() - l1.time.getTime());
+        long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
         return TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 
     public static double speedInMps(Location l1, Location l2){
-        double distanceInMeter = distance(l1,l2);
+        double distanceInMeter = distance(l1.getPosition(),l2.getPosition());
         long timeInSeconds = timeDiffInSeconds(l1,l2);
 
         double speedInMps = distanceInMeter / timeInSeconds;
@@ -68,8 +68,8 @@ public class LocationMethods {
         double yt = 0;
         double zt = 0;
         for (Position point : points) {
-            Double latitude = point.lat;
-            Double longitude = point.lon;
+            Double latitude = point.getLat();
+            Double longitude = point.getLon();
 
             /**
              * Convert Lat and Lon from degrees to radians.

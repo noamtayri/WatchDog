@@ -48,10 +48,10 @@ public class K_Means {
         boolean noChange = true;
         for (Point point:
              pointsList) {
-            double minDistance = distance(point.position, clusters.get(0).center);
+            double minDistance = LocationMethods.distance(point.position, clusters.get(0).center);
             int closestClusterIndex = 0;
             for(int clusterIndex = 0; clusterIndex < numOfClusters; clusterIndex++){
-                double currentDistance = distance(point.position, clusters.get(clusterIndex).center);
+                double currentDistance = LocationMethods.distance(point.position, clusters.get(clusterIndex).center);
                 if(currentDistance < minDistance){
                     minDistance = currentDistance;
                     closestClusterIndex = clusterIndex;
@@ -86,25 +86,13 @@ public class K_Means {
             for (Point point:
                  pointsList) {
                 if(point.myCluster == cluster.id){
-                    if(distance(point.position, cluster.center) > radius){
+                    if(LocationMethods.distance(point.position, cluster.center) > radius){
                         return false;
                     }
                 }
             }
         }
         return true;
-    }
-
-    // distance returned in METERS
-    private double distance(Position p1, Position p2) {
-        int r = 6371; //Radius of the earth in km
-        double dLat = LocationMethods.deg2rad(p2.lat - p1.lat);
-        double dLon = LocationMethods.deg2rad(p2.lon - p1.lon);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(LocationMethods.deg2rad(p1.lat)) * Math.cos(LocationMethods.deg2rad(p2.lat)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = r * c;
-
-        return d * 1000;
     }
 
     public class Cluster{
@@ -128,7 +116,7 @@ public class K_Means {
         private int myCluster;
 
         public Point(Location l){
-            this.position = new Position(l.lat, l.lon);
+            this.position = l.getPosition();
             myCluster = -1;
         }
     }

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class LocationPrediction {
 
     public static void predictLocation(Location lastKnownLocation) throws IOException {
-        long msTimeDiff = Math.abs((new Date()).getTime() - lastKnownLocation.time.getTime());
+        long msTimeDiff = Math.abs((new Date()).getTime() - lastKnownLocation.getTime().getTime());
         System.out.println("msTimeDif = " + TimeUnit.MINUTES.convert(msTimeDiff, TimeUnit.MILLISECONDS));
 
         List<Location> equalLastKnownLocation, possibleMatch;
