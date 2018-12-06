@@ -52,11 +52,11 @@ public class Trip {
 
     @Override
     public String toString() {
-        String retString = "trip#" + tripId + "start time: " + startTime + "end time: " + endTime;
-        retString+= "\n";
+        String retString = "trip#" + tripId + "\nstart time: " + startTime + "\nend time: " + endTime;
+        /*retString+= "\n";
         for (Location location : locations){
             retString+= location + "\n";
-        }
+        }*/
         return retString;
     }
 }

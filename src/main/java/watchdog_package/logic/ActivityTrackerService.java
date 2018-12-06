@@ -95,7 +95,7 @@ public class ActivityTrackerService {
         return locationIndex;
     }
 
-    private int findNextPointByRoamingDistance(List<Location> locationList){
+    /*private int findNextPointByRoamingDistance(List<Location> locationList){
         Location currentLocation = locationList.get(0);
 
         boolean found = false;
@@ -112,7 +112,7 @@ public class ActivityTrackerService {
 
         return locationIndex;
     }
-
+*/
     private void setTrip(List<Location> locationList, int locationIndex, ActivityType lastActivityType){
         switch(lastActivityType){
             case STOP:
@@ -133,7 +133,30 @@ public class ActivityTrackerService {
         }
     }
 
-    public void ExtractActivityPalces(List<Location> locationList){
+    private void setStop(List<Location> locationList, List<Location> stopCandidateList, int fromIndex, int toIndex){
+        Position stopPosition = medoid(stopCandidateList);
+        Date stopStartTime = locationList.get(fromIndex).getTime();
+        Date stopEndTime = locationList.get(toIndex).getTime();
+        Stop stop = new Stop(stopPosition, stopStartTime, stopEndTime);
+        stopList.add(stop);
+    }
+
+    private int findNextPointByRoamingDistance(List<Location> locationList, List<Location> stopCandidateList){
+        int nextPointIndex = 0;
+        boolean moveOverRoamingDistance = false;
+        while( !moveOverRoamingDistance && (++nextPointIndex < locationList.size())) {
+            stopCandidateList.add(locationList.get(nextPointIndex));
+            double diameter = diameter(stopCandidateList);
+            if((diameter > ROAMING_DISTANCE_IN_METER)){
+                moveOverRoamingDistance = true;
+                stopCandidateList.remove(stopCandidateList.get(stopCandidateList.size()-1));
+            }
+        }
+        nextPointIndex--;
+        return nextPointIndex;
+    }
+
+    public void segmentActivity(List<Location> locationList){
         ActivityType lastActivityType = ActivityType.STOP;
 
         int locationListSize = locationList.size();
@@ -155,26 +178,10 @@ public class ActivityTrackerService {
                 locationIndex++;
             }
             else{
+                nextPointIndex = locationIndex +
+                        findNextPointByRoamingDistance(restLocationList,stopCandidateList);
 
-                //TODO: define code as a function
-                boolean moveOverRoamingDistance = false;
-                while( !moveOverRoamingDistance && (++nextPointIndex < locationListSize)) {
-                    stopCandidateList.add(locationList.get(nextPointIndex));
-                    double diameter = diameter(stopCandidateList);
-                    if((diameter > ROAMING_DISTANCE_IN_METER)){
-                        moveOverRoamingDistance = true;
-                        stopCandidateList.remove(stopCandidateList.get(stopCandidateList.size()-1));
-                    }
-                }
-                nextPointIndex--;
-
-                Position stopPosition = medoid(stopCandidateList);
-                Date stopStartTime = locationList.get(locationIndex).getTime();
-                Date stopEndTime = locationList.get(nextPointIndex).getTime();
-                Stop stop = new Stop(stopPosition, stopStartTime, stopEndTime);
-                stopList.add(stop);
-
-                System.out.println("stop added: " + stop);
+                setStop(locationList, stopCandidateList, locationIndex, nextPointIndex);
 
                 locationIndex = nextPointIndex + 1;
                 lastActivityType = ActivityType.STOP;

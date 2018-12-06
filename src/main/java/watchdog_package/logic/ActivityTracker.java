@@ -10,6 +10,6 @@ public class ActivityTracker {
         List<Location> locationList = FileHandle.readFromJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
 
         ActivityTrackerService service = new ActivityTrackerService();
-        service.ExtractActivityPalces(locationList);
+        service.segmentActivity(locationList);
     }
 }
