@@ -137,4 +137,14 @@ public class LocationMethods {
         return new Position(lat, lon);
     }
 
+    public static double calculateTotalDistance(List<Location> locationList){
+        double distance = 0;
+        for(int locationIndex = 0; locationIndex < locationList.size() - 1; locationIndex++){
+            Position currentPosition = locationList.get(locationIndex).getPosition();
+            Position nextPosition = locationList.get(locationIndex + 1).getPosition();
+            distance+= distance(currentPosition,nextPosition);
+        }
+        return distance;
+    }
+
 }

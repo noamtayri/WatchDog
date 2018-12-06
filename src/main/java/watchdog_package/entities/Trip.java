@@ -5,12 +5,19 @@ import java.util.Date;
 import java.util.List;
 
 public class Trip {
+    public enum TripType{
+        STRENUOUS,
+        MODERATE,
+        RIDE;
+    }
+
     private static int numOfTrips = 0;
 
     private int tripId;
     private Date startTime;
     private Date endTime;
     private List<Location> locations;
+    private TripType tripType;
 
     public Trip(){
         tripId = numOfTrips++;
@@ -41,6 +48,13 @@ public class Trip {
         return locations;
     }
 
+    public TripType getTripType() {
+        return tripType;
+    }
+
+    public void setTripType(TripType tripType) {
+        this.tripType = tripType;
+    }
 
     public void addLocation(Location newLocation){
         if(locations.isEmpty()){
