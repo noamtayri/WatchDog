@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ActivitySegmentationService {
-    private enum ActivityType{TRIP, STOP}
+    private enum SegmentType {TRIP, STOP}
 
     public final long STAY_DURATION_IN_MIN = 5;
     public final double ROAMING_DISTANCE_IN_METER = 50;
@@ -70,7 +70,7 @@ public class ActivitySegmentationService {
         return locationIndex;
     }
 
-    private void setTrip(List<Location> locationList, int locationIndex, ActivityType lastActivityType){
+    private void setTrip(List<Location> locationList, int locationIndex, SegmentType lastActivityType){
         switch(lastActivityType){
             case STOP:
                 Trip trip = new Trip();
@@ -117,7 +117,7 @@ public class ActivitySegmentationService {
     }
 
     public void segmentActivity(List<Location> locationList){
-        ActivityType lastActivityType = ActivityType.STOP;
+        SegmentType lastActivityType = SegmentType.STOP;
 
         int locationListSize = locationList.size();
         int locationIndex = 0;
@@ -132,7 +132,7 @@ public class ActivitySegmentationService {
             if(diameter(stopCandidateList) > ROAMING_DISTANCE_IN_METER) {
 
                 setTrip(locationList,locationIndex,lastActivityType);
-                lastActivityType = ActivityType.TRIP;
+                lastActivityType = SegmentType.TRIP;
 
                 locationIndex++;
             }
@@ -143,7 +143,7 @@ public class ActivitySegmentationService {
                 setStop(locationList, stopCandidateList, locationIndex, nextPointIndex);
 
                 locationIndex = nextPointIndex + 1;
-                lastActivityType = ActivityType.STOP;
+                lastActivityType = SegmentType.STOP;
             }
         }
     }

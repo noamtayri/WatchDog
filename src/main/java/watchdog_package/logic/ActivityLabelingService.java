@@ -3,19 +3,21 @@ package main.java.watchdog_package.logic;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Trip;
 import main.java.watchdog_package.seviceClasses.ActivityCluster;
-import main.java.watchdog_package.logic.ActivityClusteringService.ActivityType;
+import main.java.watchdog_package.seviceClasses.ActivityType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class ActivityLabelingService {
-    private final double RIDE_SPEED_THRESHOLD_IN_MPS = 12.5; //45 kph
     private final long RIDE_PART_THRESHOLD = (long) 0.2;
 
     private ActivityClusteringService activityClusteringService;
+    List<Map<ActivityType, ActivityCluster>> labeledActivities;
 
     public ActivityLabelingService(){
         activityClusteringService = new ActivityClusteringService();
+        labeledActivities = new ArrayList<>();
     }
 
     private void setRide(Map<ActivityType, ActivityCluster> activities, long totalTripDurationInSec){
@@ -32,7 +34,6 @@ public class ActivityLabelingService {
     }
 
     private void filterRide(Map<ActivityType, ActivityCluster> activities){
-        //TODO: use Map<activityType, ActivityCluster>
         ActivityCluster ride = activities.get(ActivityType.RIDE);
         ActivityCluster strenuous = activities.get(ActivityType.STRENUOUS);
 
@@ -41,7 +42,7 @@ public class ActivityLabelingService {
     }
 
     private Map<ActivityType, ActivityCluster> determineTripType(Trip trip){
-        Map<ActivityClusteringService.ActivityType, ActivityCluster> activities = activityClusteringService.clusterActivities(trip.getLocations());
+        Map<ActivityType, ActivityCluster> activities = activityClusteringService.clusterActivities(trip.getLocations());
         List<Location> locations = trip.getLocations();
         long totalTripDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
 
@@ -59,7 +60,11 @@ public class ActivityLabelingService {
     public void labelActivities(List<Trip> tripList){
         for(Trip trip : tripList){
             System.out.println(trip);
-            determineTripType(trip);
+            labeledActivities.add(determineTripType(trip));
         }
+    }
+
+    public List<Map<ActivityType, ActivityCluster>> getLabeledActivities() {
+        return labeledActivities;
     }
 }

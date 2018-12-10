@@ -2,6 +2,7 @@ package main.java.watchdog_package.logic;
 
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.seviceClasses.ActivityCluster;
+import main.java.watchdog_package.seviceClasses.ActivityType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,12 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ActivityClusteringService {
-    public enum ActivityType{
-        STRENUOUS,
-        MODERATE,
-        RIDE
-    }
-
     public final double MIN_MODERATE_SPEED_IN_MPS = 0;
     public final double MAX_MODERATE_SPEED_IN_MPS = 3;
     public final double MIN_STRENUOUS_SPEED_IN_MPS = 3;

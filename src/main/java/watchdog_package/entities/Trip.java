@@ -14,7 +14,6 @@ public class Trip {
     private Date startTime;
     private Date endTime;
     private List<Location> locations;
-    //private TripType tripType;
 
     public Trip(){
         tripId = numOfTrips++;
