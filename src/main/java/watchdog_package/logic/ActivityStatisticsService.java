@@ -22,6 +22,7 @@ public class ActivityStatisticsService {
             for(ActivityType currentActivity : activitiesMap.keySet()){
                 Long duration = activitiesDuration.get(currentActivity);
                 duration += activitiesMap.get(currentActivity).getActivityDurationInSec();
+                activitiesDuration.put(currentActivity, duration);
             }
         }
         return activitiesDuration;
