@@ -49,7 +49,7 @@ public class ActivityLabelingService {
         long rideDurationInSec = activities.get(ActivityType.RIDE).getActivityDurationInSec();
 
         if((rideDurationInSec / totalTripDurationInSec) > RIDE_PART_THRESHOLD){
-            setRide(activities,totalTripDurationInSec);
+            setRide(activities, totalTripDurationInSec);
         }
         else{
             filterRide(activities);

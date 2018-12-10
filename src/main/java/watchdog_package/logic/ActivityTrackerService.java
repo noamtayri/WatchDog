@@ -13,20 +13,22 @@ public class ActivityTrackerService {
     private FilterDataService filterDataService;
     private ActivitySegmentationService activitySegmentationService;
     private ActivityLabelingService activityLabelingService;
+    private ActivityStatisticsService activityStatisticsService;
 
     private List<Location> locationList;
 
     public ActivityTrackerService(List<Location> locationList){
         this.locationList = new ArrayList<>(locationList);
-        this.filterDataService = new FilterDataService();
-        this.activitySegmentationService = new ActivitySegmentationService();
-        this.activityLabelingService = new ActivityLabelingService();
+        filterDataService = new FilterDataService();
+        activitySegmentationService = new ActivitySegmentationService();
+        activityLabelingService = new ActivityLabelingService();
+        activityStatisticsService = new ActivityStatisticsService();
     }
 
     public void analyzeData(){
         filterDataService.filterData(locationList);
         activitySegmentationService.segmentActivity(locationList);
         activityLabelingService.labelActivities(activitySegmentationService.getTripList());
-
+        activityStatisticsService.calculateStatistics(activityLabelingService.getLabeledActivities());
     }
 }
