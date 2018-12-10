@@ -1,5 +1,6 @@
 package main.java.watchdog_package.logic;
 
+import main.java.watchdog_package.seviceClasses.Cluster;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Position;
 
@@ -95,21 +96,6 @@ public class K_Means {
         return true;
     }
 
-    public class Cluster{
-        private int id;
-        private int numOfPoints;
-        private Position center;
-
-        public Cluster(int id, Position position){
-            this.id = id;
-            numOfPoints = 0;
-            center = position;
-        }
-
-        public Position getCenter() {
-            return center;
-        }
-    }
 
     private class Point{
         private Position position;

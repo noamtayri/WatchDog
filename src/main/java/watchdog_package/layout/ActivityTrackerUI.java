@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public class ActivityTrackerUI {
     public void extractActivity() throws IOException {
-        ActivityTracker.extractActivity();
+        ActivityTracker.analyzeData();
     }
 }

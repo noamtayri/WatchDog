@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.List;
 
 public class ActivityTracker {
-    public static void extractActivity() throws IOException {
+    public static void analyzeData() throws IOException {
         List<Location> locationList = FileHandle.readFromJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
 
-        ActivitySegmentationService service = new ActivitySegmentationService();
-        service.segmentActivity(locationList);
+        ActivityTrackerService service = new ActivityTrackerService(locationList);
+        service.analyzeData();
     }
 }

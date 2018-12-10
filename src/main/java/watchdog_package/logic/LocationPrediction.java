@@ -1,6 +1,7 @@
 package main.java.watchdog_package.logic;
 
 import main.java.watchdog_package.entities.Location;
+import main.java.watchdog_package.seviceClasses.Cluster;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class LocationPrediction {
         }*/
 
         K_Means kMeans = new K_Means(possibleMatch, CLUSTERS_RADIUS_IN_METERS);
-        List<K_Means.Cluster> clusters = new ArrayList<>();
+        List<Cluster> clusters = new ArrayList<>();
         clusters = kMeans.run();
 
         System.out.println("clusters size = " + clusters.size());
