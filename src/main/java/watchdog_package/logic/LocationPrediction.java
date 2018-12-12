@@ -2,9 +2,11 @@ package main.java.watchdog_package.logic;
 
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.seviceClasses.Cluster;
+import main.java.watchdog_package.seviceClasses.EstimatedArea;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +16,7 @@ public class LocationPrediction {
     private static final int TIME_DEVIATION_IN_MIN = 120;
     private static final int CLUSTERS_RADIUS_IN_METERS = 50;
 
-    public static void predictLocation(Location lastKnownLocation) throws IOException {
+    public static List<EstimatedArea> predictLocation(Location lastKnownLocation) throws IOException {
         //long msTimeDiff = Math.abs((new Date()).getTime() - lastKnownLocation.time.getTime());
         //System.out.println(msTimeDiff);
         long msTimeDiff = 1000000;
@@ -25,27 +27,33 @@ public class LocationPrediction {
 
         equalLastKnownLocation = LocationPredictionService.getSameLocation(lastKnownLocation, LOCATION_DEVIATION_IN_METERS);
 
+        if(equalLastKnownLocation.isEmpty()){
+            System.out.println("there are not enough data1");
+            return null;
+        }
+
         possibleMatch = LocationPredictionService.getLocationsPlusDeltaT(equalLastKnownLocation, msTimeDiff, TIME_DEVIATION_IN_MIN);
 
+        if(possibleMatch.isEmpty()){
+            System.out.println("there are not enough data2");
+            return null;
+        }
+
         System.out.println("list1 size = " + equalLastKnownLocation.size());
-        /*for (Location l: equalLastKnownLocation) {
-            //l.print();
-            System.out.println(l);
-        }*/
+
         System.out.println("list2 size = " + possibleMatch.size());
-        /*for (Location l: possibleMatch) {
-            //l.print();
-            System.out.println(l);
-        }*/
 
         K_Means kMeans = new K_Means(possibleMatch, CLUSTERS_RADIUS_IN_METERS);
-        List<Cluster> clusters = new ArrayList<>();
-        clusters = kMeans.run();
+        List<Cluster> clusters = kMeans.run();
+        Collections.reverse(clusters);
 
         System.out.println("clusters size = " + clusters.size());
 
-        System.out.println(clusters.get(0).getCenter());
-        System.out.println(clusters.get(1).getCenter());
-        System.out.println(clusters.get(2).getCenter());
+        List<EstimatedArea> clientEstimateAreas = new ArrayList<>();
+        double percentPerLocation = 100d / possibleMatch.size();
+        for (Cluster cluster:clusters) {
+            clientEstimateAreas.add(new EstimatedArea(cluster.numOfPoints * percentPerLocation, CLUSTERS_RADIUS_IN_METERS, cluster.center));
+        }
+        return clientEstimateAreas;
     }
 }
