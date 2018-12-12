@@ -3,6 +3,7 @@ package main.java.watchdog_package.logic;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Position;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,11 @@ public class LocationMethods {
 
     public static long timeDiffInSeconds(Location l1, Location l2) {
         long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
+        return TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS);
+    }
+
+    public static long timeDiffInSeconds(Date d1, Date d2) {
+        long msDiff = Math.abs(d2.getTime() - d1.getTime());
         return TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 

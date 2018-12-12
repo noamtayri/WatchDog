@@ -40,16 +40,27 @@ public class ActivityClusteringService {
     }
 
     private void groupPoints(List<Location> locationList){
-        ActivityType lastType = ActivityType.RIDE;
-        List<Long> durationInCurrentActivity = new ArrayList<>();
+        //ActivityType lastType = ActivityType.RIDE;
+        //List<Long> durationInCurrentActivity = new ArrayList<>();
         for(int locationIndex = 0; locationIndex < locationList.size() - 1; locationIndex++){
             Location currentLocation = locationList.get(locationIndex);
             Location nextLocation = locationList.get(locationIndex + 1);
             double speed = LocationMethods.speedInMps(currentLocation,nextLocation);
+            if(speed > MIN_RIDE_SPEED_IN_MPS){
+                speed+=0.000000001;
+            }
+            for(ActivityType currentActivity : activityClusters.keySet()) {
+                ActivityCluster currentCluster = activityClusters.get(currentActivity);
+                if(currentCluster.isSpeedInRange(speed)) {
+                    currentCluster.updateDuration(LocationMethods.timeDiffInSeconds(currentLocation,nextLocation));
+                }
+            }
+/*
             for(ActivityType currentActivity : activityClusters.keySet()) {
                 ActivityCluster currentCluster = activityClusters.get(currentActivity);
                 if(currentCluster.isSpeedInRange(speed)){
                     if(lastType != currentActivity){
+                        //BUG: I add the duration of the last activity to the current activity!!!
                         currentCluster.updateDuration(totalDuration(durationInCurrentActivity));
                         durationInCurrentActivity.clear();
                         lastType = currentActivity;
@@ -57,6 +68,7 @@ public class ActivityClusteringService {
                     durationInCurrentActivity.add(LocationMethods.timeDiffInSeconds(currentLocation,nextLocation));
                 }
             }
+*/
         }
     }
 

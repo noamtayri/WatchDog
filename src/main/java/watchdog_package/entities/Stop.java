@@ -18,6 +18,14 @@ public class Stop {
         this.endTime = endTime;
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
         return "id = " + id + "\nposition:" + position + "\nstart time: "+startTime + "\n" +"end time: "+endTime + "\n";
