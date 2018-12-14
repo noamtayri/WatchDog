@@ -74,9 +74,9 @@ public class K_Means {
                  pointsList) {
                 if(point.myCluster == cluster.id){
                     positionsInCurrentCluster.add(point.position);
-                    cluster.numOfPoints++;
                 }
             }
+            cluster.numOfPoints = positionsInCurrentCluster.size();
             cluster.center = LocationMethods.midpoint(positionsInCurrentCluster);
         }
     }
