@@ -46,6 +46,7 @@ public class ActivityLabelingService {
         Map<ActivityType, ActivityCluster> activities = new HashMap<>(activityClusteringService.clusterActivities(trip.getLocations()));
         List<Location> locations = trip.getLocations();
         long totalTripDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
+        //TODO: this scenario is a BUG!!
         if(totalTripDurationInSec <= 0){
             totalTripDurationInSec = 1;
         }
@@ -61,6 +62,7 @@ public class ActivityLabelingService {
     }
 
     public void labelActivities(List<Trip> tripList){
+        System.out.println("Labeling Data...");
         for(Trip trip : tripList){
             labeledActivities.add(determineTripType(trip));
         }

@@ -23,6 +23,7 @@ public class ActivityStatisticsService {
         for(Stop stop : stops){
             duration+= LocationMethods.timeDiffInSeconds(stop.getStartTime(), stop.getEndTime());
         }
+        duration+= rideDurationInSec;
         return duration;
     }
 
@@ -41,11 +42,11 @@ public class ActivityStatisticsService {
         return activitiesDuration;
     }
 
-    //TODO: get StopList as a 2nd parameter and calculate RIDE as REST
     public void calculateStatistics(List<Map<ActivityType, ActivityCluster>> activities, List<Stop> stops){
+        System.out.println("Calculating Statistics...");
         Map<ActivityType, Long> activitiesDuration = getActivitiesDuration(activities, stops);
         for(ActivityType currentActivityType : activitiesDuration.keySet()){
-            System.out.println("Activity: "+currentActivityType+" duration: "+ activitiesDuration.get(currentActivityType));
+            System.out.println("Activity: "+currentActivityType+" duration: " + activitiesDuration.get(currentActivityType)+ " Seconds");
         }
     }
 }

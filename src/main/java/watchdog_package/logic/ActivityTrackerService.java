@@ -27,7 +27,7 @@ public class ActivityTrackerService {
 
     public void analyzeData(){
         filterDataService.filterData(locationList);
-        activitySegmentationService.segmentActivity(locationList);
+        activitySegmentationService.segmentActivity(filterDataService.getFilteredLocationList());
         activityLabelingService.labelActivities(activitySegmentationService.getTripList());
         activityStatisticsService.calculateStatistics(activityLabelingService.getLabeledActivities(), activitySegmentationService.getStopList());
     }

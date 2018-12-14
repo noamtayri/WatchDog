@@ -135,6 +135,7 @@ public class ActivitySegmentationService {
     }
 
     public void segmentActivity(List<Location> locationList){
+        System.out.println("Segmenting Data...");
         //BUG: I can get trip with one location!
         SegmentType lastActivityType = SegmentType.STOP;
 
