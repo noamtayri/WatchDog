@@ -1,16 +1,11 @@
 package main.java.watchdog_package.layout;
 
-import main.java.watchdog_package.logic.FileHandle;
-import main.java.watchdog_package.logic.LocationMethods;
-import main.java.watchdog_package.logic.LocationPrediction;
-import main.java.watchdog_package.logic.LocationPredictionService;
+import main.java.watchdog_package.logic.*;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.seviceClasses.EstimatedArea;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class LocationPredictionUI {
 
@@ -21,6 +16,7 @@ public class LocationPredictionUI {
             System.out.println("predictLocation algorithm failed");
             return;
         }
+        Collections.sort(estimateAreas, new EstimateAreaComparator());
         System.out.println("acording to the historical data, from the given location and time,\nthe probability(%) areas are:");
         for (EstimatedArea estimatedArea: estimateAreas) {
             System.out.println(estimatedArea);

@@ -16,6 +16,10 @@ public class EstimatedArea {
         this.center = center;
     }
 
+    public double getPercentage() {
+        return percentage;
+    }
+
     public int getRadius() {
         return radius;
     }

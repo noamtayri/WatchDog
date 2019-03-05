@@ -17,9 +17,7 @@ public class LocationPrediction {
     private static final int CLUSTERS_RADIUS_IN_METERS = 50;
 
     public static List<EstimatedArea> predictLocation(Location lastKnownLocation) throws IOException {
-        //long msTimeDiff = Math.abs((new Date()).getTime() - lastKnownLocation.time.getTime());
-        //System.out.println(msTimeDiff);
-        long msTimeDiff = 1000000;
+        long msTimeDiff = 300000; //to set deltaT manually (in testing cases)
         //long msTimeDiff = Math.abs((new Date()).getTime() - lastKnownLocation.getTime().getTime());
         System.out.println("msTimeDif = " + TimeUnit.MINUTES.convert(msTimeDiff, TimeUnit.MILLISECONDS));
 
@@ -45,7 +43,6 @@ public class LocationPrediction {
 
         K_Means kMeans = new K_Means(possibleMatch, CLUSTERS_RADIUS_IN_METERS);
         List<Cluster> clusters = kMeans.run();
-        Collections.reverse(clusters);
 
         System.out.println("clusters size = " + clusters.size());
 
