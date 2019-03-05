@@ -12,6 +12,7 @@ import java.util.List;
 public class ActivitySegmentationService {
     private enum SegmentType {TRIP, STOP}
 
+    public final long MAX_TIME_INTERVAL_IN_MIN = 2;
     public final long STAY_DURATION_IN_MIN = 5;
     public final double ROAMING_DISTANCE_IN_METER = 50;
 
@@ -71,28 +72,45 @@ public class ActivitySegmentationService {
     }
 
     private void setTrip(List<Location> locationList, int locationIndex, SegmentType lastActivityType){
+        Trip trip = new Trip();
+        Location currentLocation = locationList.get(locationIndex);
+
         switch(lastActivityType){
             case STOP:
-                Trip trip = new Trip();
-                if( locationIndex > 0 ) {
-                    trip.addLocation(locationList.get(locationIndex - 1));
-                }
-                trip.addLocation(locationList.get(locationIndex));
                 tripList.add(trip);
+                if( locationIndex > 0 ) {
+                    Location previousLocation = locationList.get(locationIndex - 1);
+                    if(LocationMethods.timeDiffInMinutes(currentLocation,previousLocation) < MAX_TIME_INTERVAL_IN_MIN) {
+                        trip.addLocation(previousLocation);
+                    }
+                }
                 break;
             case TRIP:
-                int tripId = tripList.size() - 1;
-                tripList.get(tripId).addLocation(locationList.get(locationIndex));
+                if( locationIndex > 0 ) {
+                    Location previousLocation = locationList.get(locationIndex - 1);
+                    if(LocationMethods.timeDiffInMinutes(currentLocation,previousLocation) > MAX_TIME_INTERVAL_IN_MIN) {
+                        tripList.add(trip);
+                    }
+                    else{
+                        int tripId = tripList.size() - 1;
+                        trip = tripList.get(tripId);
+                    }
+                }
                 break;
             default:
                 //Do nothing
                 break;
         }
+        trip.addLocation(currentLocation);
     }
 
     private void setStop(List<Location> locationList, List<Location> stopCandidateList, int fromIndex, int toIndex){
         if(fromIndex > 0){
-            fromIndex--;
+            Location firstLocation = locationList.get(fromIndex);
+            Location previousLocation = locationList.get(fromIndex - 1);
+            if(LocationMethods.distance(previousLocation.getPosition(), firstLocation.getPosition()) < ROAMING_DISTANCE_IN_METER){
+                fromIndex--;
+            }
         }
         Position stopPosition = medoid(stopCandidateList);
         Date stopStartTime = locationList.get(fromIndex).getTime();
@@ -117,6 +135,8 @@ public class ActivitySegmentationService {
     }
 
     public void segmentActivity(List<Location> locationList){
+        System.out.println("Segmenting Data...");
+        //BUG: I can get trip with one location!
         SegmentType lastActivityType = SegmentType.STOP;
 
         int locationListSize = locationList.size();

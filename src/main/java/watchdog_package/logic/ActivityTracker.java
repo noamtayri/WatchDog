@@ -9,7 +9,7 @@ public class ActivityTracker {
     public static void analyzeData() throws IOException {
         List<Location> locationList = FileHandle.readFromJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
 
-        ActivityTrackerService service = new ActivityTrackerService(locationList);
-        service.analyzeData();
+        ActivityTrackerService activityTrackerService = new ActivityTrackerService(locationList);
+        activityTrackerService.analyzeData();
     }
 }

@@ -1,5 +1,6 @@
 package main.java.watchdog_package.logic;
 
+import main.java.watchdog_package.entities.Stop;
 import main.java.watchdog_package.seviceClasses.ActivityCluster;
 import main.java.watchdog_package.seviceClasses.ActivityType;
 
@@ -16,22 +17,36 @@ public class ActivityStatisticsService {
         activitiesDuration.put(ActivityType.RIDE,(long)0);
         return activitiesDuration;
     }
-    private Map<ActivityType, Long> getActivitiesDuration(List<Map<ActivityType, ActivityCluster>> activities){
+
+    private long getRestDuration(List<Stop> stops, double rideDurationInSec){
+        long duration = 0;
+        for(Stop stop : stops){
+            duration+= LocationMethods.timeDiffInSeconds(stop.getStartTime(), stop.getEndTime());
+        }
+        duration+= rideDurationInSec;
+        return duration;
+    }
+
+    private Map<ActivityType, Long> getActivitiesDuration(List<Map<ActivityType, ActivityCluster>> activities, List<Stop> stops){
         Map<ActivityType, Long> activitiesDuration = initStatistics();
         for(Map<ActivityType, ActivityCluster> activitiesMap : activities){
             for(ActivityType currentActivity : activitiesMap.keySet()){
                 Long duration = activitiesDuration.get(currentActivity);
                 duration += activitiesMap.get(currentActivity).getActivityDurationInSec();
+                activitiesDuration.put(currentActivity, duration);
             }
         }
+        activitiesDuration.put(ActivityType.REST, getRestDuration(stops, activitiesDuration.get(ActivityType.RIDE)));
+        //activitiesDuration.remove(ActivityType.RIDE);
+
         return activitiesDuration;
     }
 
-    //TODO: get StopList as a 2nd parameter and calculate RIDE as REST
-    public void calculateStatistics(List<Map<ActivityType, ActivityCluster>> activities){
-        Map<ActivityType, Long> activitiesDuration = getActivitiesDuration(activities);
+    public void calculateStatistics(List<Map<ActivityType, ActivityCluster>> activities, List<Stop> stops){
+        System.out.println("Calculating Statistics...");
+        Map<ActivityType, Long> activitiesDuration = getActivitiesDuration(activities, stops);
         for(ActivityType currentActivityType : activitiesDuration.keySet()){
-            System.out.println("Activity: "+currentActivityType+" duration: "+ activitiesDuration.get(currentActivityType));
+            System.out.println("Activity: "+currentActivityType+" duration: " + activitiesDuration.get(currentActivityType)+ " Seconds");
         }
     }
 }

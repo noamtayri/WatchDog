@@ -6,11 +6,12 @@ import main.java.watchdog_package.seviceClasses.ActivityCluster;
 import main.java.watchdog_package.seviceClasses.ActivityType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ActivityLabelingService {
-    private final long RIDE_PART_THRESHOLD = (long) 0.2;
+    private final long RIDE_PART_IN_PERCENT_THRESHOLD = (long) 10;
 
     private ActivityClusteringService activityClusteringService;
     List<Map<ActivityType, ActivityCluster>> labeledActivities;
@@ -42,13 +43,16 @@ public class ActivityLabelingService {
     }
 
     private Map<ActivityType, ActivityCluster> determineTripType(Trip trip){
-        Map<ActivityType, ActivityCluster> activities = activityClusteringService.clusterActivities(trip.getLocations());
+        Map<ActivityType, ActivityCluster> activities = new HashMap<>(activityClusteringService.clusterActivities(trip.getLocations()));
         List<Location> locations = trip.getLocations();
         long totalTripDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
-
+        //TODO: this scenario is a BUG!!
+        if(totalTripDurationInSec <= 0){
+            totalTripDurationInSec = 1;
+        }
         long rideDurationInSec = activities.get(ActivityType.RIDE).getActivityDurationInSec();
-
-        if((rideDurationInSec / totalTripDurationInSec) > RIDE_PART_THRESHOLD){
+        double ridePart = ((double)(100*rideDurationInSec) / (double)totalTripDurationInSec);
+        if(ridePart > RIDE_PART_IN_PERCENT_THRESHOLD){
             setRide(activities, totalTripDurationInSec);
         }
         else{
@@ -58,8 +62,8 @@ public class ActivityLabelingService {
     }
 
     public void labelActivities(List<Trip> tripList){
+        System.out.println("Labeling Data...");
         for(Trip trip : tripList){
-            System.out.println(trip);
             labeledActivities.add(determineTripType(trip));
         }
     }
