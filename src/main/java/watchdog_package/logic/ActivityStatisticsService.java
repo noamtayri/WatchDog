@@ -1,8 +1,10 @@
 package main.java.watchdog_package.logic;
 
-import main.java.watchdog_package.entities.Stop;
+import main.java.watchdog_package.entities.Stay;
+import main.java.watchdog_package.entities.Movement;
 import main.java.watchdog_package.seviceClasses.ActivityCluster;
 import main.java.watchdog_package.seviceClasses.ActivityType;
+import main.java.watchdog_package.seviceClasses.LabeledMovement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,35 +20,41 @@ public class ActivityStatisticsService {
         return activitiesDuration;
     }
 
-    private long getRestDuration(List<Stop> stops, double rideDurationInSec){
+    private long getRestDuration(List<Stay> StayList, double rideDurationInSec){
         long duration = 0;
-        for(Stop stop : stops){
-            duration+= LocationMethods.timeDiffInSeconds(stop.getStartTime(), stop.getEndTime());
+        for(Stay stay : StayList){
+            duration+= LocationMethods.timeDiffInSeconds(stay.getStartTime(), stay.getEndTime());
         }
         duration+= rideDurationInSec;
         return duration;
     }
 
-    private Map<ActivityType, Long> getActivitiesDuration(List<Map<ActivityType, ActivityCluster>> activities, List<Stop> stops){
+    private Map<ActivityType, Long> getActivitiesDuration(List<LabeledMovement> activities, List<Stay> stayList){
         Map<ActivityType, Long> activitiesDuration = initStatistics();
-        for(Map<ActivityType, ActivityCluster> activitiesMap : activities){
-            for(ActivityType currentActivity : activitiesMap.keySet()){
-                Long duration = activitiesDuration.get(currentActivity);
-                duration += activitiesMap.get(currentActivity).getActivityDurationInSec();
-                activitiesDuration.put(currentActivity, duration);
-            }
+        for(LabeledMovement activity : activities){
+            Long duration = activitiesDuration.get(activity.getActivityType());
+            duration += activity.getActivityDuration();
+            activitiesDuration.put(activity.getActivityType(), duration);
         }
-        activitiesDuration.put(ActivityType.REST, getRestDuration(stops, activitiesDuration.get(ActivityType.RIDE)));
+        activitiesDuration.put(ActivityType.REST, getRestDuration(stayList, activitiesDuration.get(ActivityType.RIDE)));
         //activitiesDuration.remove(ActivityType.RIDE);
 
         return activitiesDuration;
     }
 
-    public void calculateStatistics(List<Map<ActivityType, ActivityCluster>> activities, List<Stop> stops){
+    private long getTotalDuration(Map<ActivityType, Long> activities){
+        long duration = 0;
+        for(Long d : activities.values())
+            duration+= d;
+        return duration;
+    }
+
+    public void calculateStatistics(List<LabeledMovement>  activities, List<Stay> stayList){
         System.out.println("Calculating Statistics...");
-        Map<ActivityType, Long> activitiesDuration = getActivitiesDuration(activities, stops);
+        Map<ActivityType, Long> activitiesDuration = getActivitiesDuration(activities, stayList);
         for(ActivityType currentActivityType : activitiesDuration.keySet()){
             System.out.println("Activity: "+currentActivityType+" duration: " + activitiesDuration.get(currentActivityType)+ " Seconds");
+            //System.out.println("Activity: "+currentActivityType+" part: " + ((activitiesDuration.get(currentActivityType) * 100) / getTotalDuration(activitiesDuration))+ "%");
         }
     }
 }

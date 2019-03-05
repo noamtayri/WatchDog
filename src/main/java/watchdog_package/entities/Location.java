@@ -20,6 +20,11 @@ public class Location {
 */
     }
 
+    public Location(Location location){
+        position = new Position(location.getPosition().getLat(), location.getPosition().getLon());
+        time = location.getTime();
+    }
+
     public Location() {
         position = new Position();
         time = null;

@@ -2,34 +2,35 @@ package main.java.watchdog_package.logic;
 
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Position;
-import main.java.watchdog_package.entities.Stop;
-import main.java.watchdog_package.entities.Trip;
+import main.java.watchdog_package.entities.Stay;
+import main.java.watchdog_package.entities.Movement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ActivitySegmentationService {
-    private enum SegmentType {TRIP, STOP}
+    private enum SegmentType {MOVEMENT, STAY}
 
-    public final long MAX_TIME_INTERVAL_IN_MIN = 2;
+    public final long MAX_TIME_INTERVAL_IN_MIN = 4;
     public final long STAY_DURATION_IN_MIN = 5;
     public final double ROAMING_DISTANCE_IN_METER = 50;
 
-    private List<Stop> stopList;
-    private List<Trip> tripList;
+    private List<Stay> stayList;
+    private List<Movement> movementList;
 
     public ActivitySegmentationService(){
-        stopList = new ArrayList<>();
-        tripList = new ArrayList<>();
+        stayList = new ArrayList<>();
+        movementList = new ArrayList<>();
     }
 
-    public List<Stop> getStopList() {
-        return stopList;
+    public List<Stay> getStayList() {
+        return stayList;
     }
 
-    public List<Trip> getTripList() {
-        return tripList;
+    public List<Movement> getMovementList() {
+        return movementList;
     }
 
     public double diameter(List<Location> locationList){
@@ -71,29 +72,29 @@ public class ActivitySegmentationService {
         return locationIndex;
     }
 
-    private void setTrip(List<Location> locationList, int locationIndex, SegmentType lastActivityType){
-        Trip trip = new Trip();
+    private void setMovement(List<Location> locationList, int locationIndex, SegmentType lastActivityType){
+        Movement movement = new Movement();
         Location currentLocation = locationList.get(locationIndex);
 
         switch(lastActivityType){
-            case STOP:
-                tripList.add(trip);
+            case STAY:
+                movementList.add(movement);
                 if( locationIndex > 0 ) {
                     Location previousLocation = locationList.get(locationIndex - 1);
                     if(LocationMethods.timeDiffInMinutes(currentLocation,previousLocation) < MAX_TIME_INTERVAL_IN_MIN) {
-                        trip.addLocation(previousLocation);
+                        movement.addLocation(previousLocation);
                     }
                 }
                 break;
-            case TRIP:
+            case MOVEMENT:
                 if( locationIndex > 0 ) {
                     Location previousLocation = locationList.get(locationIndex - 1);
                     if(LocationMethods.timeDiffInMinutes(currentLocation,previousLocation) > MAX_TIME_INTERVAL_IN_MIN) {
-                        tripList.add(trip);
+                        movementList.add(movement);
                     }
                     else{
-                        int tripId = tripList.size() - 1;
-                        trip = tripList.get(tripId);
+                        int movementId = movementList.size() - 1;
+                        movement = movementList.get(movementId);
                     }
                 }
                 break;
@@ -101,10 +102,10 @@ public class ActivitySegmentationService {
                 //Do nothing
                 break;
         }
-        trip.addLocation(currentLocation);
+        movement.addLocation(currentLocation);
     }
 
-    private void setStop(List<Location> locationList, List<Location> stopCandidateList, int fromIndex, int toIndex){
+    private void setStay(List<Location> locationList, List<Location> stayList, int fromIndex, int toIndex){
         if(fromIndex > 0){
             Location firstLocation = locationList.get(fromIndex);
             Location previousLocation = locationList.get(fromIndex - 1);
@@ -112,22 +113,22 @@ public class ActivitySegmentationService {
                 fromIndex--;
             }
         }
-        Position stopPosition = medoid(stopCandidateList);
-        Date stopStartTime = locationList.get(fromIndex).getTime();
-        Date stopEndTime = locationList.get(toIndex).getTime();
-        Stop stop = new Stop(stopPosition, stopStartTime, stopEndTime);
-        stopList.add(stop);
+        Position stayPosition = medoid(stayList);
+        Date stayStartTime = locationList.get(fromIndex).getTime();
+        Date stayEndTime = locationList.get(toIndex).getTime();
+        Stay stay = new Stay(stayPosition, stayStartTime, stayEndTime);
+        this.stayList.add(stay);
     }
 
-    private int findNextPointByRoamingDistance(List<Location> locationList, List<Location> stopCandidateList){
+    private int findNextPointByRoamingDistance(List<Location> locationList, List<Location>stayCandidateList){
         int nextPointIndex = 0;
         boolean moveOverRoamingDistance = false;
         while( !moveOverRoamingDistance && (++nextPointIndex < locationList.size())) {
-            stopCandidateList.add(locationList.get(nextPointIndex));
-            double diameter = diameter(stopCandidateList);
+            stayCandidateList.add(locationList.get(nextPointIndex));
+            double diameter = diameter(stayCandidateList);
             if((diameter > ROAMING_DISTANCE_IN_METER)){
                 moveOverRoamingDistance = true;
-                stopCandidateList.remove(stopCandidateList.get(stopCandidateList.size()-1));
+                stayCandidateList.remove(stayCandidateList.get(stayCandidateList.size()-1));
             }
         }
         nextPointIndex--;
@@ -136,8 +137,7 @@ public class ActivitySegmentationService {
 
     public void segmentActivity(List<Location> locationList){
         System.out.println("Segmenting Data...");
-        //BUG: I can get trip with one location!
-        SegmentType lastActivityType = SegmentType.STOP;
+        SegmentType lastActivityType = SegmentType.STAY;
 
         int locationListSize = locationList.size();
         int locationIndex = 0;
@@ -147,24 +147,29 @@ public class ActivitySegmentationService {
             int nextPointIndex = locationIndex +
                     findNextPointIndexByStayDuration(restLocationList);
 
-            List<Location> stopCandidateList = new ArrayList<>(locationList.subList(locationIndex,nextPointIndex+1));
+            List<Location> stayCandidateList = new ArrayList<>(locationList.subList(locationIndex,nextPointIndex+1));
 
-            if(diameter(stopCandidateList) > ROAMING_DISTANCE_IN_METER) {
+            if(diameter(stayCandidateList) > ROAMING_DISTANCE_IN_METER) {
 
-                setTrip(locationList,locationIndex,lastActivityType);
-                lastActivityType = SegmentType.TRIP;
+                setMovement(locationList,locationIndex,lastActivityType);
+                lastActivityType = SegmentType.MOVEMENT;
 
                 locationIndex++;
             }
             else{
                 nextPointIndex = locationIndex +
-                        findNextPointByRoamingDistance(restLocationList,stopCandidateList);
+                        findNextPointByRoamingDistance(restLocationList,stayCandidateList);
 
-                setStop(locationList, stopCandidateList, locationIndex, nextPointIndex);
+                setStay(locationList, stayCandidateList, locationIndex, nextPointIndex);
 
                 locationIndex = nextPointIndex + 1;
-                lastActivityType = SegmentType.STOP;
+                lastActivityType = SegmentType.STAY;
             }
+        }
+        try {
+            Utils.writeSegmentsToFile(stayList,movementList);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

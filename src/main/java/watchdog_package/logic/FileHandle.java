@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Position;
+import main.java.watchdog_package.seviceClasses.Log;
 
 public class FileHandle {
 
@@ -28,7 +29,7 @@ public class FileHandle {
 
     public static void handleData() throws ParseException, NumberFormatException, IOException {
 
-        readFromXML("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\data.xml");
+        readFromXML("C:\\git\\WatchDog\\data.xml");
 
         writeToJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
 
@@ -47,6 +48,20 @@ public class FileHandle {
         }
         out.close();
     }
+
+    public static List<Log> readLogFromJSON(String filePath)
+            throws JsonParseException, JsonMappingException, IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File(filePath);
+
+        List<Log> logList = mapper.readValue(file, new TypeReference<List<Log>>() {
+        });
+
+        System.out.println("JSON file read");
+        return logList;
+    }
+
 
     public static List<Location> readFromJSON(String filePath)
             throws JsonParseException, JsonMappingException, IOException {
@@ -68,6 +83,15 @@ public class FileHandle {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer();
         writer.writeValue(new File(filePath), data);
+
+        System.out.println("JSON file created");
+    }
+
+    public static void writeToJSON(String filePath, List<Location> locationList) throws JsonGenerationException, JsonMappingException, IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter writer = mapper.writer();
+        writer.writeValue(new File(filePath), locationList);
 
         System.out.println("JSON file created");
     }
@@ -123,7 +147,6 @@ public class FileHandle {
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd-H-m-s");
             fmt.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
             Date time = fmt.parse(timeStr);
-
 
             Location l = new Location(new Position(lat, lon), time);
             data.add(l);

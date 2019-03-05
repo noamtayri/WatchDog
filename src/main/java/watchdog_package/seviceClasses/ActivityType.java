@@ -5,5 +5,6 @@ public enum ActivityType{
     MODERATE,
     REST,
     RIDE
+    //NONE
 }
 

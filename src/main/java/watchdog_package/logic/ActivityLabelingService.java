@@ -1,9 +1,10 @@
 package main.java.watchdog_package.logic;
 
 import main.java.watchdog_package.entities.Location;
-import main.java.watchdog_package.entities.Trip;
+import main.java.watchdog_package.entities.Movement;
 import main.java.watchdog_package.seviceClasses.ActivityCluster;
 import main.java.watchdog_package.seviceClasses.ActivityType;
+import main.java.watchdog_package.seviceClasses.LabeledMovement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,18 +15,20 @@ public class ActivityLabelingService {
     private final long RIDE_PART_IN_PERCENT_THRESHOLD = (long) 10;
 
     private ActivityClusteringService activityClusteringService;
-    List<Map<ActivityType, ActivityCluster>> labeledActivities;
-
+    //List<Map<ActivityType, ActivityCluster>> labeledActivities;
+    //Map<Movement,Map<ActivityType, ActivityCluster>> labeledActivities;
+    List<LabeledMovement> labeledActivities;
     public ActivityLabelingService(){
         activityClusteringService = new ActivityClusteringService();
+        //labeledActivities = new HashMap<>();
         labeledActivities = new ArrayList<>();
     }
 
-    private void setRide(Map<ActivityType, ActivityCluster> activities, long totalTripDurationInSec){
+    private void setRide(Map<ActivityType, ActivityCluster> activities, long totalMovementDurationInSec){
         for(ActivityType currentActivity : activities.keySet()){
             long currentDuration;
             if(currentActivity == ActivityType.RIDE){
-                currentDuration = totalTripDurationInSec;
+                currentDuration = totalMovementDurationInSec;
             }
             else{
                 currentDuration = 0;
@@ -42,33 +45,80 @@ public class ActivityLabelingService {
         ride.setActivityDurationInSec(0);
     }
 
-    private Map<ActivityType, ActivityCluster> determineTripType(Trip trip){
-        Map<ActivityType, ActivityCluster> activities = new HashMap<>(activityClusteringService.clusterActivities(trip.getLocations()));
-        List<Location> locations = trip.getLocations();
-        long totalTripDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
+    private void setStrenuous(Map<ActivityType,ActivityCluster> activities, long totalMovementDurationInSec) {
+        activities.get(ActivityType.STRENUOUS).setActivityDurationInSec(totalMovementDurationInSec);
+        activities.get(ActivityType.MODERATE).setActivityDurationInSec(0);
+    }
+
+/*
+    private Map<ActivityType, ActivityCluster> determineMovementType(Movement movement){
+        Map<ActivityType, ActivityCluster> activities = new HashMap<>(activityClusteringService.clusterActivities(movement.getLocationList()));
+        List<Location> locations = movement.getLocationList();
+        long totalMovementDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
+
         //TODO: this scenario is a BUG!!
-        if(totalTripDurationInSec <= 0){
-            totalTripDurationInSec = 1;
+        if(totalMovementDurationInSec <= 0){
+            totalMovementDurationInSec = 1;
         }
+
         long rideDurationInSec = activities.get(ActivityType.RIDE).getActivityDurationInSec();
-        double ridePart = ((double)(100*rideDurationInSec) / (double)totalTripDurationInSec);
+        double ridePart = ((double)(100*rideDurationInSec) / (double)totalMovementDurationInSec);
         if(ridePart > RIDE_PART_IN_PERCENT_THRESHOLD){
-            setRide(activities, totalTripDurationInSec);
+            setRide(activities, totalMovementDurationInSec);
         }
         else{
             filterRide(activities);
         }
+        long strenuousActivityDuration = activities.get(ActivityType.STRENUOUS).getActivityDurationInSec();
+        if(strenuousActivityDuration > 0){
+            setStrenuous(activities, totalMovementDurationInSec);
+        }
         return activities;
     }
+*/
 
-    public void labelActivities(List<Trip> tripList){
+    private LabeledMovement determineMovementType(Movement movement){
+        ActivityType dominantActivityType = ActivityType.MODERATE;
+        Map<ActivityType, ActivityCluster> activities = new HashMap<>(activityClusteringService.clusterActivities(movement.getLocationList()));
+        List<Location> locations = movement.getLocationList();
+        long totalMovementDurationInSec = LocationMethods.timeDiffInSeconds(locations.get(0), locations.get(locations.size()-1));
+
+        long rideDurationInSec = activities.get(ActivityType.RIDE).getActivityDurationInSec();
+        double ridePart = ((double)(100*rideDurationInSec) / (double)totalMovementDurationInSec);
+        if(ridePart > RIDE_PART_IN_PERCENT_THRESHOLD){
+            dominantActivityType = ActivityType.RIDE;
+        }
+        else {
+            long strenuousActivityDuration = activities.get(ActivityType.STRENUOUS).getActivityDurationInSec();
+            if (strenuousActivityDuration > 0) {
+                dominantActivityType = ActivityType.STRENUOUS;
+            }
+        }
+        return new LabeledMovement(movement,dominantActivityType);
+    }
+
+
+/*
+    public void labelActivities(List<Movement> movementList){
         System.out.println("Labeling Data...");
-        for(Trip trip : tripList){
-            labeledActivities.add(determineTripType(trip));
+        for(Movement movement : movementList){
+            labeledActivities.put(movement, determineMovementType(movement));
+        }
+    }
+*/
+
+    public void labelActivities(List<Movement> movementList){
+        System.out.println("Labeling Data...");
+        for(Movement movement : movementList){
+            labeledActivities.add(determineMovementType(movement));
         }
     }
 
-    public List<Map<ActivityType, ActivityCluster>> getLabeledActivities() {
+    /*public  Map<Movement,Map<ActivityType, ActivityCluster>> getLabeledActivities() {
+        return labeledActivities;
+    }*/
+
+    public  List<LabeledMovement> getLabeledActivities() {
         return labeledActivities;
     }
 }
