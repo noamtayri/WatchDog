@@ -23,8 +23,9 @@ public class K_Means {
 
     public List<Cluster> run(){
         boolean allClustersInRadius = false;
+        initClusters();
         while(!allClustersInRadius){
-            initClusters();
+            //initClusters();
             boolean pointsDidNotSwitchClusters = false;
             while(!pointsDidNotSwitchClusters){
                 pointsDidNotSwitchClusters = groupPoints();
@@ -32,8 +33,15 @@ public class K_Means {
             }
             allClustersInRadius = isAllClusterInRadiusRange();
             if(!allClustersInRadius){
-                numOfClusters++;
-                clusters.clear();
+                //numOfClusters++;
+                //clusters.clear();
+                Cluster newCluster = generateNewCluster();
+                if(newCluster == null){
+                    System.out.println("error in genarating new cluster");
+                    break;
+                }
+                clusters.add(newCluster);
+                numOfClusters = clusters.size();
             }
         }
         return clusters;
@@ -82,10 +90,8 @@ public class K_Means {
     }
 
     private boolean isAllClusterInRadiusRange(){
-        for (Cluster cluster:
-             clusters) {
-            for (Point point:
-                 pointsList) {
+        for (Cluster cluster: clusters) {
+            for (Point point: pointsList) {
                 if(point.myCluster == cluster.id){
                     if(LocationMethods.distance(point.position, cluster.center) > radius){
                         return false;
@@ -94,6 +100,20 @@ public class K_Means {
             }
         }
         return true;
+    }
+
+    private Cluster generateNewCluster(){
+        for (Point point: pointsList){
+            for (Cluster cluster: clusters){
+                if(point.myCluster == cluster.id) {
+                    if (LocationMethods.distance(point.position, cluster.center) > radius) {
+                        System.out.println("d = " + LocationMethods.distance(point.position, cluster.center));
+                        return new Cluster(clusters.size(), point.position);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 
