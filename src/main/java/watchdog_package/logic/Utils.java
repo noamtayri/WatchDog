@@ -12,12 +12,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class Utils {
-    public static int testIndex = 0;
-
-    public static void printTest(){
-        System.out.println("test #" + testIndex++);
-    }
-
     public static void printLocationList(List<Location> locationList){
         for(Location location : locationList){
             System.out.println(location);
@@ -37,13 +31,41 @@ public class Utils {
     }
 
     public static void printMatrix(long [][] matrix){
+        long diagonalSum = 0;
+        long totalSum = 0;
+        System.out.print("\t\t\t\t");
+        for(int colIndex = 0; colIndex < matrix.length; colIndex++){
+            if(colIndex == 2 || colIndex == 3){
+                System.out.print(ActivityType.values()[colIndex] + "\t\t\t");
+            }
+            else{
+                System.out.print(ActivityType.values()[colIndex] + "\t\t");
+            }
+        }
+        System.out.println();
         for(int rowIndex = 0; rowIndex < matrix.length; rowIndex++){
-            System.out.print(ActivityType.values()[rowIndex] + "\t");
+            if(rowIndex == 2 || rowIndex == 3){
+                System.out.print(ActivityType.values()[rowIndex] + "\t\t\t");
+            }
+            else{
+                System.out.print(ActivityType.values()[rowIndex] + "\t\t");
+            }
             for(int colIndex = 0; colIndex < matrix[rowIndex].length; colIndex++){
-                System.out.print(matrix[rowIndex][colIndex] + "\t");
+                if(matrix[rowIndex][colIndex] < 1000){
+                    System.out.print(matrix[rowIndex][colIndex] + "\t\t\t\t");
+                }
+                else{
+                    System.out.print(matrix[rowIndex][colIndex] + "\t\t\t");
+                }
+                totalSum += matrix[rowIndex][colIndex];
+                if(rowIndex == colIndex){
+                    diagonalSum += matrix[rowIndex][colIndex];
+                }
             }
             System.out.println();
         }
+
+        System.out.println("total = "+ totalSum + " diagonal = " + diagonalSum);
     }
 
     public static void writeSegmentsToFile(List<Stay> stayList, List<Movement> movementList) throws IOException {

@@ -1,5 +1,7 @@
 package main.java.watchdog_package.seviceClasses;
 
+import main.java.watchdog_package.logic.LocationMethods;
+
 import java.util.*;
 
 public class TimeLine {
@@ -26,17 +28,42 @@ public class TimeLine {
 
     public Date getNextTimeStamp(Date currentTime){
         Date ret;
-        Log prevLog = logMap.floorEntry(currentTime).getValue();
-
-        if(currentTime.compareTo(prevLog.getEndTime()) >= 0){
-            Log nextLog = logMap.higherEntry(currentTime).getValue();
-            ret = nextLog.getStartTime();
+        if(currentTime.compareTo(logMap.firstEntry().getValue().getStartTime()) < 0){
+            ret = logMap.firstEntry().getValue().getStartTime();
         }
         else{
+            Log prevLog = logMap.floorEntry(currentTime).getValue();
             ret = prevLog.getEndTime();
+            if(currentTime.compareTo(prevLog.getEndTime()) >= 0){
+                Log lastLog = logMap.lastEntry().getValue();
+                if(currentTime.compareTo(lastLog.getEndTime()) == 0){
+                    ret = currentTime;
+                }
+                else{
+                    Log nextLog = logMap.higherEntry(currentTime).getValue();
+                    ret = nextLog.getStartTime();
+                }
+            }
+
+        }
+        return ret;
+    }
+
+    public void setUnrecordedLog(){
+        List<Log> unrecorded = new ArrayList<>();
+        List<Log> logList = new ArrayList<>(logMap.values());
+        for(int logIndex = 0; logIndex < logList.size() - 1; logIndex++){
+            Date startTime = logList.get(logIndex).getEndTime();
+            Date endTime = logList.get(logIndex+1).getStartTime();
+            long timeGap = LocationMethods.timeDiffInMinutes(startTime, endTime);
+            if(timeGap > 4){
+                unrecorded.add(new Log(startTime,endTime,ActivityType.UNRECORDED));
+            }
         }
 
-        return ret;
+        for(Log log : unrecorded){
+            logMap.put(log.getStartTime(),log);
+        }
     }
 
     public boolean addLog(Log log){
@@ -44,7 +71,7 @@ public class TimeLine {
 
         if(!logMap.isEmpty()){
             Log lastLog = logMap.lastEntry().getValue();
-            if(lastLog.getEndTime().compareTo(log.getStartTime()) > 0){
+            if(lastLog.getEndTime().compareTo(log.getStartTime()) > 0){ //if end time of last log is greater than the start of the new log
                 success = false;
             }
         }
@@ -53,5 +80,9 @@ public class TimeLine {
         }
 
         return success;
+    }
+
+    public List<Log> getLogList(){
+        return (List<Log>) logMap.values();
     }
 }

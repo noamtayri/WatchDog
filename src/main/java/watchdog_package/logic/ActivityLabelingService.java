@@ -97,26 +97,12 @@ public class ActivityLabelingService {
         return new LabeledMovement(movement,dominantActivityType);
     }
 
-
-/*
     public void labelActivities(List<Movement> movementList){
-        System.out.println("Labeling Data...");
-        for(Movement movement : movementList){
-            labeledActivities.put(movement, determineMovementType(movement));
-        }
-    }
-*/
-
-    public void labelActivities(List<Movement> movementList){
-        System.out.println("Labeling Data...");
+        //System.out.println("Labeling Data...");
         for(Movement movement : movementList){
             labeledActivities.add(determineMovementType(movement));
         }
     }
-
-    /*public  Map<Movement,Map<ActivityType, ActivityCluster>> getLabeledActivities() {
-        return labeledActivities;
-    }*/
 
     public  List<LabeledMovement> getLabeledActivities() {
         return labeledActivities;

@@ -31,7 +31,7 @@ public class FileHandle {
 
         readFromXML("C:\\git\\WatchDog\\data.xml");
 
-        writeToJSON("C:\\Users\\Nyxoah\\IdeaProjects\\WatchDog\\json.json");
+        writeToJSON("C:\\git\\WatchDog\\json.json");
 
     }
 
@@ -50,7 +50,7 @@ public class FileHandle {
     }
 
     public static List<Log> readLogFromJSON(String filePath)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(filePath);
@@ -58,7 +58,14 @@ public class FileHandle {
         List<Log> logList = mapper.readValue(file, new TypeReference<List<Log>>() {
         });
 
-        System.out.println("JSON file read");
+        for(Log log : logList){
+            Date start = log.getStartTime();
+            start.setTime(start.getTime() - (3600*3*1000));
+            Date end = log.getEndTime();
+            end.setTime(end.getTime() - (3600*3*1000));
+        }
+
+        System.out.println("Log JSON file read");
         return logList;
     }
 

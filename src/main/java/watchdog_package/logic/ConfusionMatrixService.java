@@ -5,6 +5,7 @@ import main.java.watchdog_package.seviceClasses.TimeLine;
 
 import java.util.Date;
 
+//This class is used for testing only
 public class ConfusionMatrixService {
     private long [][] confusionMatrix;
 
@@ -20,15 +21,15 @@ public class ConfusionMatrixService {
         }
     }
 
-    private Date getNextTimeStamp(TimeLine actualTimeLine, TimeLine predictedTimeLine, Date currentDate){
+    private Date getNextTimeStamp(TimeLine actualTimeLine, TimeLine analyzedTimeLine, Date currentDate){
         Date ret;
         Date nextActualTime = actualTimeLine.getNextTimeStamp(currentDate);
-        Date nextPredictedTime = predictedTimeLine.getNextTimeStamp(currentDate);
-        if(nextActualTime.compareTo(nextPredictedTime) < 0){
+        Date nextAnalyzedTime = analyzedTimeLine.getNextTimeStamp(currentDate);
+        if(nextActualTime.compareTo(nextAnalyzedTime) < 0){
             ret = nextActualTime;
         }
         else{
-            ret = nextPredictedTime;
+            ret = nextAnalyzedTime;
         }
         return ret;
     }
@@ -41,13 +42,14 @@ public class ConfusionMatrixService {
     }
 
 
-    public long [][] getConfusionMatrix(TimeLine actualTimeLine, TimeLine predictedTimeLine){
+    public long [][] getConfusionMatrix(TimeLine actualTimeLine, TimeLine analyzedTimeLine){
         clearMatrix();
-        Date startTime = actualTimeLine.getStartTime();
+        Date startTime = analyzedTimeLine.getStartTime();
         while(startTime.compareTo(actualTimeLine.getEndTime()) < 0){
-            Date endTime = getNextTimeStamp(actualTimeLine, predictedTimeLine, startTime);
-            setActivityPeriod(actualTimeLine, predictedTimeLine, startTime, endTime);
-            startTime = getNextTimeStamp(actualTimeLine, predictedTimeLine, endTime);
+            System.out.println(startTime);
+            Date endTime = getNextTimeStamp(actualTimeLine, analyzedTimeLine, startTime);
+            setActivityPeriod(actualTimeLine, analyzedTimeLine, startTime, endTime);
+            startTime = getNextTimeStamp(actualTimeLine, analyzedTimeLine, endTime);
         }
         return confusionMatrix;
     }

@@ -4,7 +4,7 @@ public enum ActivityType{
     STRENUOUS,
     MODERATE,
     REST,
-    RIDE
-    //NONE
+    RIDE,
+    UNRECORDED
 }
 

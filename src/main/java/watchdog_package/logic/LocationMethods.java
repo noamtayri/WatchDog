@@ -40,6 +40,11 @@ public class LocationMethods {
         return TimeUnit.MINUTES.convert(msDiff, TimeUnit.MILLISECONDS);
     }
 
+    public static long timeDiffInMinutes(Date d1, Date d2) {
+        long msDiff = Math.abs(d2.getTime() - d1.getTime());
+        return TimeUnit.MINUTES.convert(msDiff, TimeUnit.MILLISECONDS);
+    }
+
     public static long timeDiffInSeconds(Location l1, Location l2) {
         long msDiff = Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
         return TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS);
@@ -49,6 +54,17 @@ public class LocationMethods {
         long msDiff = Math.abs(d2.getTime() - d1.getTime());
         return TimeUnit.SECONDS.convert(msDiff, TimeUnit.MILLISECONDS);
     }
+
+
+    public static long timeDiffInMilliSeconds(Location l1, Location l2) {
+        return Math.abs(l2.getTime().getTime() - l1.getTime().getTime());
+    }
+
+    public static long timeDiffInMilliSeconds(Date d1, Date d2) {
+        return Math.abs(d2.getTime() - d1.getTime());
+    }
+
+
 
     public static double speedInMps(Location l1, Location l2){
         double distanceInMeter = distance(l1.getPosition(),l2.getPosition());

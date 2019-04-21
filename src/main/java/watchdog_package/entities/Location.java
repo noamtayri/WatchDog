@@ -60,8 +60,4 @@ public class Location {
     public String toString() {
         return position + "\ttime = " + time;
     }
-
-    public void print(){
-        System.out.println(position);
-    }
 }

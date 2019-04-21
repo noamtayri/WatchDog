@@ -14,8 +14,9 @@ public class ActivitySegmentationService {
     private enum SegmentType {MOVEMENT, STAY}
 
     public final long MAX_TIME_INTERVAL_IN_MIN = 4;
+    public final long MAX_TIME_GAP_IN_HOURS = 24;
     public final long STAY_DURATION_IN_MIN = 5;
-    public final double ROAMING_DISTANCE_IN_METER = 50;
+    public final double ROAMING_DISTANCE_IN_METER = 100; //50
 
     private List<Stay> stayList;
     private List<Movement> movementList;
@@ -135,14 +136,31 @@ public class ActivitySegmentationService {
         return nextPointIndex;
     }
 
+    public int findLocationSequence(List<Location> locationList, int currentIndex){
+        int endIndex = currentIndex + 1;
+        boolean found = false;
+        while(endIndex < locationList.size() && !found){
+            long timeDiffInHours = LocationMethods.timeDiffInHours(locationList.get(currentIndex), locationList.get(endIndex));
+            if(timeDiffInHours > MAX_TIME_GAP_IN_HOURS){
+                found = true;
+            }
+            else{
+                currentIndex++;
+                endIndex++;
+            }
+        }
+        return endIndex;
+    }
+
     public void segmentActivity(List<Location> locationList){
-        System.out.println("Segmenting Data...");
+        //System.out.println("Segmenting Data...");
         SegmentType lastActivityType = SegmentType.STAY;
 
         int locationListSize = locationList.size();
         int locationIndex = 0;
         while(locationIndex < locationListSize){
-            List<Location> restLocationList = locationList.subList(locationIndex,locationListSize);
+            int endOfLocationSequence = findLocationSequence(locationList,locationIndex);
+            List<Location> restLocationList = locationList.subList(locationIndex,endOfLocationSequence);
 
             int nextPointIndex = locationIndex +
                     findNextPointIndexByStayDuration(restLocationList);
