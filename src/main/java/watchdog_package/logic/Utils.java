@@ -4,6 +4,7 @@ import main.java.watchdog_package.entities.Location;
 import main.java.watchdog_package.entities.Stay;
 import main.java.watchdog_package.entities.Movement;
 import main.java.watchdog_package.seviceClasses.ActivityType;
+import main.java.watchdog_package.seviceClasses.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -101,5 +102,11 @@ public class Utils {
         }
 
         writer.close();
+    }
+
+    public static void printLogList(List<Log> logList){
+        for(Log log : logList){
+            System.out.println(log);
+        }
     }
 }

@@ -10,9 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 public class LocationPredictionService {
 
-    public static List<Location> getSameLocation(Location location, int locationDeviationInMeters) throws IOException {
-        List<Location> data = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
-        data = data.subList(0,50000);
+    public static List<Location> getSameLocation(Location location, List<Location> data, int locationDeviationInMeters) throws IOException {
+        //List<Location> data = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
         List<Location> result = new ArrayList<>();
 
         for (Location l: data) {
@@ -24,9 +23,8 @@ public class LocationPredictionService {
         return result;
     }
 
-    public static List<Location> getLocationsPlusDeltaT(List<Location> list, long time, int timeDeviationInSec) throws IOException {
-        List<Location> data = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
-        data = data.subList(0,50000);
+    public static List<Location> getLocationsPlusDeltaT(List<Location> list, List<Location> data, long time, int timeDeviationInSec) throws IOException {
+        //List<Location> data = FileHandle.readFromJSON("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\json.json");
         List<Location> result = new ArrayList<>();
 
         for (Location l1: list) {
@@ -51,7 +49,7 @@ public class LocationPredictionService {
                     return true;
                 else{
                     long diffBetweenLastLocation = Math.abs(result.get(result.size()-1).getTime().getTime() - l2.getTime().getTime());
-                    if((TimeUnit.SECONDS.convert(diffBetweenLastLocation, TimeUnit.MILLISECONDS) > 300)){
+                    if((TimeUnit.SECONDS.convert(diffBetweenLastLocation, TimeUnit.MILLISECONDS) > timeDeviationInSec)){//TODO:NOA test
                         return true;
                     }
                 }

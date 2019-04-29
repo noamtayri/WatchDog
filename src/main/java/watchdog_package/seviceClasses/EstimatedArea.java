@@ -24,6 +24,10 @@ public class EstimatedArea {
         return radius;
     }
 
+   public Position getCenter(){
+        return center;
+   }
+
     @Override
     public String toString() {
         return "EstimatedArea {" +
