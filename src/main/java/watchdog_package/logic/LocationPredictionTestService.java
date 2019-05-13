@@ -107,7 +107,7 @@ public class LocationPredictionTestService {
         return successRate;
     }
 
-    private EstimatedArea findClosestArea(Position realPosition, List<EstimatedArea> estimatedAreaList){
+    public static EstimatedArea findClosestArea(Position realPosition, List<EstimatedArea> estimatedAreaList){
         EstimatedArea closestArea = estimatedAreaList.get(0);
         double minDistance = LocationMethods.distance(realPosition, closestArea.getCenter());
         for( EstimatedArea estimatedArea : estimatedAreaList){
@@ -118,5 +118,25 @@ public class LocationPredictionTestService {
             }
         }
         return closestArea;
+    }
+
+    public void noDataTest() throws IOException {
+        //Load all locations from DB
+        List<Location> locationList = FileHandle.readFromJSON("C:\\git\\WatchDog\\json.json");
+        for(int testIndex = 0; testIndex < TEST_SIZE; testIndex++) {
+
+            //Randomly choose 2 locations
+            Random rand = new Random();
+
+            int lastLocationIndex = rand.nextInt(locationList.size());
+
+            long timDiff = 121500000; //45 minutes
+
+            LocationPrediction.predictLocation(locationList, locationList.get(lastLocationIndex), timDiff);
+
+            if(testIndex % 50 == 0){
+                System.out.println("#"+testIndex);
+            }
+        }
     }
 }

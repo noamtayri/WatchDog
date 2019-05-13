@@ -66,7 +66,11 @@ public class Utils {
             System.out.println();
         }
 
-        System.out.println("total = "+ totalSum + " diagonal = " + diagonalSum);
+        System.out.println();
+        System.out.println("Total Matrix Sum = "+ totalSum);
+        System.out.println("Diagonal Sum = " + diagonalSum);
+        System.out.println();
+        System.out.println(String.format( "Success Rate = %.3f%s", ((100*(double)diagonalSum)/totalSum),"%" ));
     }
 
     public static void writeSegmentsToFile(List<Stay> stayList, List<Movement> movementList) throws IOException {

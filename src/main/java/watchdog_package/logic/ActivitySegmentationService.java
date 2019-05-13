@@ -140,8 +140,12 @@ public class ActivitySegmentationService {
         int endIndex = currentIndex + 1;
         boolean found = false;
         while(endIndex < locationList.size() && !found){
-            long timeDiffInHours = LocationMethods.timeDiffInHours(locationList.get(currentIndex), locationList.get(endIndex));
-            if(timeDiffInHours > MAX_TIME_GAP_IN_HOURS){
+            //long timeDiffInHours = LocationMethods.timeDiffInHours(locationList.get(currentIndex), locationList.get(endIndex));
+            Location s = locationList.get(endIndex-1);
+            Location e = locationList.get(endIndex);
+            //long timeDiffInHours = LocationMethods.timeDiffInHours(locationList.get(endIndex-1), locationList.get(endIndex));
+            long timeDiffInHours = LocationMethods.timeDiffInHours(s, e);
+            if(timeDiffInHours >= MAX_TIME_GAP_IN_HOURS){
                 found = true;
             }
             else{

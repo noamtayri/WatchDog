@@ -107,7 +107,7 @@ public class K_Means {
             for (Cluster cluster: clusters){
                 if(point.myCluster == cluster.id) {
                     if (LocationMethods.distance(point.position, cluster.center) > radius) {
-                        System.out.println("d = " + LocationMethods.distance(point.position, cluster.center));
+                        //System.out.println("d = " + LocationMethods.distance(point.position, cluster.center));
                         return new Cluster(clusters.size(), point.position);
                     }
                 }

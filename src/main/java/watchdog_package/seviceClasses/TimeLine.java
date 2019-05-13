@@ -83,6 +83,6 @@ public class TimeLine {
     }
 
     public List<Log> getLogList(){
-        return (List<Log>) logMap.values();
+        return new ArrayList<>(logMap.values());
     }
 }

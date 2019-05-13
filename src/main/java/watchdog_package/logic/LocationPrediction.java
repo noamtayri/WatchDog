@@ -27,10 +27,11 @@ public class LocationPrediction {
         equalLastKnownLocation = LocationPredictionService.getSameLocation(lastKnownLocation, locationList, LOCATION_DEVIATION_IN_METERS);
 
         if(equalLastKnownLocation.isEmpty()){
-            //System.out.println("there are not enough data1");
+            System.out.println("there are not enough data1");
+            System.out.println(lastKnownLocation);
             return null;
         }
-
+        
         possibleMatch = LocationPredictionService.getLocationsPlusDeltaT(equalLastKnownLocation, locationList, msTimeDiff, TIME_DEVIATION_IN_MIN);
 
         if(possibleMatch.isEmpty()){

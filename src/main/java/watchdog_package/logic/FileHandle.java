@@ -35,6 +35,15 @@ public class FileHandle {
 
     }
 
+
+    public static void handleTestData() throws ParseException, NumberFormatException, IOException {
+
+        readFromXML("C:\\git\\WatchDog\\data-31-12-18.xml");
+
+        writeToJSON("C:\\git\\WatchDog\\testData.json");
+
+    }
+
     public static void addXMLs(String[] files) throws IOException {
         OutputStream out = new FileOutputStream("C:\\Users\\USER\\Desktop\\Noam\\watchdog\\data\\big_xml.xml");
         byte[] buf = new byte[256];

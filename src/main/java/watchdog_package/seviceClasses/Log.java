@@ -39,4 +39,13 @@ public class Log {
     public void setActivityType(ActivityType activityType) {
         this.activityType = activityType;
     }
+
+    @Override
+    public String toString() {
+        return "Log{" +
+                "startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", activityType=" + activityType +
+                '}';
+    }
 }

@@ -39,6 +39,17 @@ public class ConfusionMatrixService {
         ActivityType predictedActivity = predictedTimeLine.getActivityAtTime(startTime);
         long durationInSeconds = LocationMethods.timeDiffInSeconds(startTime,endTime);
         confusionMatrix[actualActivity.ordinal()][predictedActivity.ordinal()] += durationInSeconds;
+
+//        if(actualActivity.equals(ActivityType.RIDE) && predictedActivity.equals(ActivityType.UNRECORDED)){
+//            System.out.println("\ngap of "+ durationInSeconds);
+//            System.out.println("actual = " +actualActivity.toString()+" predicted = " + predictedActivity.toString());
+//            System.out.println("start time: " + startTime+ " end time: " + endTime +"\n");
+//        }
+        if(!actualActivity.equals(predictedActivity) && durationInSeconds > 10000){
+            System.out.println("\ngap of "+ durationInSeconds);
+            System.out.println("actual = " +actualActivity.toString()+" predicted = " + predictedActivity.toString());
+            System.out.println("start time: " + startTime+ " end time: " + endTime +"\n");
+        }
     }
 
 
@@ -46,7 +57,7 @@ public class ConfusionMatrixService {
         clearMatrix();
         Date startTime = analyzedTimeLine.getStartTime();
         while(startTime.compareTo(actualTimeLine.getEndTime()) < 0){
-            System.out.println(startTime);
+            //System.out.println(startTime);
             Date endTime = getNextTimeStamp(actualTimeLine, analyzedTimeLine, startTime);
             setActivityPeriod(actualTimeLine, analyzedTimeLine, startTime, endTime);
             startTime = getNextTimeStamp(actualTimeLine, analyzedTimeLine, endTime);
